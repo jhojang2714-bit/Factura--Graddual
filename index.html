@@ -1,371 +1,241 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Graddual — Convertidor de Facturas</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/assets/styles-Iez-ugrh.css" data-precedence="default"/><title>Convertidor de facturas Smartbeemo → Graddual</title><meta name="author" content="Lovable"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary"/><meta name="twitter:site" content="@Lovable"/><meta name="twitter:title" content="Lovable App"/><meta name="twitter:description" content="My Creator App helps users create and manage digital content."/><meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2aa84be2-a6d0-458a-93e3-89d3a7cfc115/id-preview-0f5dffd7--a5beb18b-ba1c-486d-80aa-5b620e8d9932.lovable.app-1782160299134.png"/><meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2aa84be2-a6d0-458a-93e3-89d3a7cfc115/id-preview-0f5dffd7--a5beb18b-ba1c-486d-80aa-5b620e8d9932.lovable.app-1782160299134.png"/><meta name="description" content="Convierte facturas PDF de Smartbeemo al formato Graddual usando IA. Subí el PDF y descargá la factura lista."/><meta property="og:title" content="Convertidor de facturas Graddual"/><meta property="og:description" content="Convierte facturas Smartbeemo a Graddual con IA."/><link rel="modulepreload" href="/assets/index-DJNj_4wI.js"/><link rel="modulepreload" href="/assets/routes-Bt6ujJOp.js"/>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,-apple-system,sans-serif;background:#f8f7ff;color:#1a1a2e;min-height:100vh}
-  .app{max-width:660px;margin:0 auto;padding:32px 16px}
-  .header{display:flex;align-items:center;gap:12px;margin-bottom:28px}
-  .logo-box{background:#1a0a2e;border-radius:10px;padding:9px 18px}
-  .logo-box span{color:#fff;font-weight:700;font-size:17px;letter-spacing:-0.3px}
-  .header-text h1{font-size:15px;font-weight:600;color:#1a1a2e}
-  .header-text p{font-size:12px;color:#999;margin-top:1px}
-  .card{background:#fff;border-radius:16px;border:1px solid #eee;box-shadow:0 1px 6px rgba(0,0,0,.05);padding:24px;margin-bottom:16px}
-  .section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#bbb;margin-bottom:12px}
-  .drop-zone{border:2px dashed #e0deff;border-radius:12px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .18s}
-  .drop-zone:hover,.drop-zone.drag{border-color:#7F77DD;background:#f5f4ff}
-  .drop-icon{font-size:36px;margin-bottom:10px}
-  .drop-label{font-size:14px;color:#555;font-weight:500}
-  .drop-sub{font-size:12px;color:#bbb;margin-top:5px}
-  .file-chip{display:flex;align-items:center;gap:10px;background:#f8f7ff;border-radius:10px;padding:11px 14px;margin-top:12px;border:1px solid #ebe9ff}
-  .file-chip .name{font-size:13px;font-weight:500;color:#222;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .file-chip .size{font-size:11px;color:#bbb;white-space:nowrap}
-  .btn-primary{width:100%;margin-top:14px;padding:13px;border-radius:11px;font-size:14px;font-weight:600;color:#fff;background:#1a0a2e;border:none;cursor:pointer;transition:opacity .15s}
-  .btn-primary:hover:not(:disabled){opacity:.85}
-  .btn-primary:disabled{opacity:.35;cursor:not-allowed}
-  .btn-download{width:100%;margin-top:14px;padding:13px;border-radius:11px;font-size:14px;font-weight:600;color:#fff;background:#7F77DD;border:none;cursor:pointer;transition:opacity .15s}
-  .btn-download:hover{opacity:.87}
-  .status{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:10px;font-size:13px;margin-top:12px}
-  .status.loading{background:#eff6ff;color:#1d4ed8}
-  .status.success{background:#f0fdf4;color:#15803d}
-  .status.error{background:#fef2f2;color:#dc2626}
-  .spin{width:15px;height:15px;border:2px solid #bfdbfe;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-  @keyframes spin{to{transform:rotate(360deg)}}
+	@font-face {
+		font-family: 'CameraPlainVariable';
+		src: url('https://cdn.gpteng.co/mcp-widgets/v1/fonts/CameraPlainVariable.woff2') format('woff2');
+		font-weight: 100 900;
+		font-style: normal;
+		font-display: swap;
+	}
 
-  /* Preview */
-  .preview-wrap{background:#f8f7ff;border-radius:12px;padding:20px;border:1px solid #ebe9ff}
-  .inv-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px}
-  .inv-logo{background:#1a0a2e;border-radius:7px;padding:7px 14px}
-  .inv-logo span{color:#fff;font-weight:700;font-size:14px}
-  .inv-title{font-size:22px;font-weight:300;color:#1a1a2e;text-align:right}
-  .inv-num{display:inline-block;margin-top:5px;padding:2px 10px;border-radius:5px;font-size:11px;font-weight:700;background:#EEEDFE;color:#3C3489}
-  .inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
-  .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#bbb;margin-bottom:5px}
-  .sender-name{font-weight:700;font-size:13px;margin-bottom:2px}
-  .sender-info{font-size:11px;color:#999;line-height:1.6}
-  table.dtable{width:100%;font-size:11px;border-collapse:collapse}
-  table.dtable td{padding:2.5px 0}
-  table.dtable td:last-child{text-align:right;font-weight:600}
-  table.dtable td:first-child{color:#999}
-  .billtxt{font-weight:700;font-size:13px;margin-bottom:16px}
-  table.items{width:100%;border-collapse:collapse;font-size:11px}
-  table.items th{background:#EEEDFE;color:#3C3489;padding:7px 8px;font-weight:700;text-align:left}
-  table.items th:not(:first-child){text-align:center}
-  table.items th:last-child{text-align:right}
-  table.items td{padding:8px;border-bottom:1px solid #f0f0f0}
-  table.items td:not(:first-child){text-align:center}
-  table.items td:last-child{text-align:right;font-weight:600}
-  .totals-box{max-width:200px;margin-left:auto;margin-top:14px}
-  .trow{display:flex;justify-content:space-between;padding:3px 0;font-size:12px}
-  .trow .lk{color:#999}
-  .trow.grand{font-weight:700;border-top:2px solid #ddd;padding-top:7px;margin-top:3px;font-size:14px}
+	#lovable-badge {
+		--badge-bg: #1b1b1b;
+		--badge-text: #c5c1b9;
+		--badge-text-hover: #dcdad5;
+		--badge-radius: 6px;
+		--badge-padding: 8px;
+		--badge-gap: 6px;
+		--badge-shadow: 
+			0 0 0 1px rgba(0, 0, 0, 0.88),
+			0 1px 0 0 rgba(0, 0, 0, 0.04),
+			0 2px 2px -1px rgba(0, 0, 0, 0.08),
+			0 4px 4px -2px rgba(0, 0, 0, 0.08),
+			0 8px 8px -4px rgba(0, 0, 0, 0.08),
+			0 16px 16px -8px rgba(0, 0, 0, 0.08);
+		--badge-transition-duration: 0.2s;
+		--badge-transition-easing: cubic-bezier(0.16, 1, 0.32, 1);
+		--focus-color: #575ECF;
+		--focus-offset: 2px;
+		--focus-width: 2px;
+		
+		position: fixed;
+		bottom: 12px;
+		right: 12px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		z-index: 1000000;
+		background-color: var(--badge-bg) !important;
+		color: var(--badge-text) !important;
+		border-radius: var(--badge-radius);
+		box-shadow: var(--badge-shadow) !important;
+		font-size: 12px;
+		font-family: CameraPlainVariable, "CameraPlainVariable Fallback", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+		font-weight: 400 !important;
+		text-transform: none !important;
+		font-feature-settings: normal !important;
+		transform: translateZ(0);
+		will-change: transform, opacity;
+	}
+
+	#lovable-badge-cta {
+		display: flex;
+		align-items: center;
+		gap: var(--badge-gap);
+		padding: 0 var(--badge-padding);
+		height: 100%;
+		color: inherit;
+		text-decoration: none;
+		white-space: nowrap;
+		border-radius: var(--badge-radius) 0 0 var(--badge-radius);
+		transition: 
+			background-color var(--badge-transition-duration) ease,
+			color var(--badge-transition-duration) ease,
+			transform 0.1s ease;
+	}
+
+	#lovable-badge-cta:hover {
+		background: rgba(255, 255, 255, 0.04);
+		color: var(--badge-text-hover);
+	}
+
+	#lovable-badge-cta:active {
+		transform: scale(0.98);
+	}
+
+	#lovable-badge-cta:focus {
+		outline: none;
+	}
+
+	#lovable-badge-cta:focus-visible {
+		outline: var(--focus-width) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+		z-index: 1;
+	}
+
+	#lovable-badge-text {
+		line-height: 1;
+	}
+
+	#lovable-badge-divider {
+		width: 1px;
+		height: 24px;
+		background-color: rgba(255, 255, 255, 0.04);
+		flex-shrink: 0;
+	}
+
+	#lovable-badge-close {
+		width: 24px;
+		height: 24px;
+		min-width: 24px;
+		min-height: 24px;
+		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0 var(--badge-radius) var(--badge-radius) 0;
+		flex-shrink: 0;
+		transition: 
+			background-color var(--badge-transition-duration) ease,
+			transform 0.1s ease;
+	}
+
+	#lovable-badge-close:hover {
+		background: rgba(255, 255, 255, 0.04);
+	}
+
+	#lovable-badge-close:active {
+		transform: scale(0.92);
+	}
+
+	#lovable-badge-close:focus {
+		outline: none;
+	}
+
+	#lovable-badge-close:focus-visible {
+		outline: var(--focus-width) solid var(--focus-color);
+		outline-offset: calc(var(--focus-offset) * -1);
+		z-index: 1;
+	}
+
+	#lovable-badge-close svg path {
+		fill: var(--badge-text);
+		transition: fill var(--badge-transition-duration) ease;
+	}
+
+	#lovable-badge-close:hover svg path {
+		fill: var(--badge-text-hover);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		#lovable-badge-cta,
+		#lovable-badge-close,
+		#lovable-badge-close svg path {
+			transition: none;
+		}
+		
+		#lovable-badge-cta:active,
+		#lovable-badge-close:active {
+			transform: none;
+		}
+	}
+
+	@media (prefers-contrast: high) {
+		#lovable-badge {
+			--badge-bg: #000;
+			--badge-text: #fff;
+			--badge-text-hover: #fff;
+			border: 2px solid currentColor;
+		}
+		
+		#lovable-badge-cta:focus-visible,
+		#lovable-badge-close:focus-visible {
+			outline-width: 3px;
+		}
+	}
 </style>
-</head>
-<body>
-<div id="root"></div>
-<script type="text/babel">
-const {useState} = React;
+<script defer src="/~flock.js" data-proxy-url="/~api/analytics"></script><script defer src="/__l5e/events.js" data-artifact-kind="dwl_content_hash" data-artifact-id="a5445f7e98d0478577c96846b1bb151ebbe41b1fe67c4e1b8f5f8da449e23453" data-commit-sha="2e84c029f10d1947fcf53b0c9aadcb6598442d99" data-context-token="v1.eyJwcm9qZWN0X2lkIjoiYTViZWIxOGItYmExYy00ODZkLTgwYWEtNWI2MjBlOGQ5OTMyIiwiYXJ0aWZhY3Rfa2luZCI6ImR3bF9jb250ZW50X2hhc2giLCJhcnRpZmFjdF9pZCI6ImE1NDQ1ZjdlOThkMDQ3ODU3N2M5Njg0NmIxYmIxNTFlYmJlNDFiMWZlNjdjNGUxYjhmNWY4ZGE0NDllMjM0NTMiLCJjb21taXRfc2hhIjoiMmU4NGMwMjlmMTBkMTk0N2ZjZjUzYjBjOWFhZGNiNjU5ODQ0MmQ5OSIsImV4cCI6MTc4MjIzNzQ3MX0.OHADusvfqwxXiCv-M2NPjeBxg-jKLpltGTUWEU8NG-M" data-replay="rrweb" data-replay-sample-rate="0.1" data-replay-crash-sample-rate="0.1" data-replay-url="/__l5e/replay" data-replay-script-url="/__l5e/rrweb-record.js?__l5e_v=0.1.2-error-event-hardening"></script></head><body><!--$--><div class="min-h-screen py-10 px-4 bg-white relative overflow-hidden"><div class="fixed top-0 right-0 w-[260px] h-[260px] pointer-events-none opacity-[0.12]" aria-hidden="true"><svg viewBox="0 0 200 200" class="w-full h-full"><path d="M80 10 C110 10 130 40 130 75 C130 115 95 130 60 130 C30 130 10 100 10 65 C10 25 45 10 80 10 Z" fill="#2563EB"></path><path d="M110 5 C145 5 165 35 165 70 C165 110 130 125 95 125 C60 125 45 95 45 60 C45 20 80 5 110 5 Z" fill="#E11D8E" opacity="0.9"></path><path d="M140 0 C175 0 195 30 195 65 C195 105 160 120 125 120 C90 120 75 90 75 55 C75 15 110 0 140 0 Z" fill="#F59E0B" opacity="0.9"></path></svg></div><div class="fixed bottom-0 right-0 w-[220px] h-[220px] pointer-events-none opacity-[0.08]" aria-hidden="true"><svg viewBox="0 0 200 200" class="w-full h-full"><path d="M40 120 C60 105 95 105 115 120 C140 145 130 180 95 190 C60 200 25 175 40 120 Z" fill="#2563EB"></path><path d="M75 105 C95 90 130 90 150 105 C175 130 165 165 130 175 C95 185 60 160 75 105 Z" fill="#E11D8E" opacity="0.9"></path><path d="M110 90 C130 75 165 75 185 90 C210 115 200 150 165 160 C130 170 95 145 110 90 Z" fill="#F59E0B" opacity="0.9"></path></svg></div><div class="max-w-2xl mx-auto relative z-10"><header class="flex items-center gap-4 mb-8"><svg viewBox="0 0 220 48" class="h-8" xmlns="http://www.w3.org/2000/svg"><g transform="translate(4, 6)"><path d="M22 4 C30 4 34 12 34 20 C34 32 26 36 18 36 C10 36 6 28 6 20 C6 8 14 4 22 4 Z" fill="#2563EB"></path><path d="M14 12 C22 12 26 20 26 28 C26 40 18 44 10 44 C2 44 -2 36 -2 28 C-2 16 6 12 14 12 Z" fill="#E11D8E" opacity="0.95"></path><path d="M30 12 C38 12 42 20 42 28 C42 40 34 44 26 44 C18 44 14 36 14 28 C14 16 22 12 30 12 Z" fill="#F59E0B" opacity="0.95"></path><path d="M22 16 C26 16 28 20 28 24 C28 30 24 32 20 32 C16 32 14 28 14 24 C14 18 18 16 22 16 Z" fill="white"></path></g><text x="56" y="30" font-family="&#x27;Inter&#x27;, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#1F1F1F" letter-spacing="-0.5">graddual</text><text x="56" y="42" font-family="&#x27;Inter&#x27;, system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#6B7280" letter-spacing="0.15em">PAGA EN CUOTAS</text></svg><div class="border-l border-gray-200 pl-4"><h1 class="text-sm font-semibold text-gray-900 m-0">Convertidor de facturas</h1><p class="text-xs text-gray-500 m-0">Smartbeemo → Graddual</p></div></header><section class="rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm p-6 mb-4 shadow-sm"><p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500 mb-3">Subir factura</p><div class="border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all border-gray-300 hover:border-blue-400 hover:bg-gray-50"><div class="text-4xl mb-3">📄</div><p class="text-sm text-gray-900 font-medium">Haz clic o arrastra tu factura PDF aquí</p><p class="text-xs text-gray-500 mt-1">Facturas de Smartbeemo en formato PDF</p></div><input id="pdf-input" type="file" accept=".pdf" class="hidden"/><button disabled="" class="w-full mt-4 py-3 rounded-xl text-sm font-semibold text-white transition-all disabled:cursor-not-allowed hover:opacity-90" style="background:#D1D5DB;box-shadow:none">Convertir a formato Graddual</button></section></div></div><script>(function(t){let s;try{s=JSON.parse(sessionStorage.getItem(t.storageKey)||"{}")}catch(e){console.error(e);return}const c=t.key||window.history.state?.__TSR_key,r=c?s[c]:void 0;if(t.shouldScrollRestoration&&r&&typeof r=="object"&&Object.keys(r).length>0){for(const e in r){const o=r[e];if(!o||typeof o!="object")continue;const l=o.scrollX,i=o.scrollY;if(!(!Number.isFinite(l)||!Number.isFinite(i))){if(e==="window")window.scrollTo({top:i,left:l,behavior:t.behavior});else if(e){let n;try{n=document.querySelector(e)}catch{continue}n&&(n.scrollLeft=l,n.scrollTop=i)}}}return}const a=window.location.hash.split("#",2)[1];if(a){const e=window.history.state?.__hashScrollIntoViewOptions??!0;if(e){const o=document.getElementById(a);o&&o.scrollIntoView(e)}return}window.scrollTo({top:0,left:0,behavior:t.behavior})})({"storageKey":"tsr-scroll-restoration-v1_3","shouldScrollRestoration":true});document.currentScript.remove()</script><!--/$--><section aria-label="Notifications alt+T" tabindex="-1" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></section><script class="$tsr" id="$tsr-stream-barrier">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/assets/index-DJNj_4wI.js"],assets:$R[5]=[$R[6]={tag:"script",attrs:$R[7]={type:"module",async:!0},children:"import(\"/assets/index-DJNj_4wI.js\")"}]},"/":$R[8]={preloads:$R[9]=["/assets/routes-Bt6ujJOp.js"]}}},matches:$R[10]=[$R[11]={i:"__root__",u:1782233871946,s:"success",ssr:!0},$R[12]={i:"",u:1782233871946,s:"success",ssr:!0}],lastMatchId:""})($R["tsr"]);$_TSR.e();document.currentScript.remove()</script><script type="module" async="">import("/assets/index-DJNj_4wI.js")</script>
+<aside
+	id="lovable-badge"
+	role="complementary"
+	dir="ltr"
+	lang="en"
+	aria-label="Edit with Lovable">
+	<a
+		id="lovable-badge-cta" 
+		target="_blank" 
+		href="https://lovable.dev/projects/a5beb18b-ba1c-486d-80aa-5b620e8d9932?utm_source=lovable-badge"
+		rel="noopener nofollow"
+		aria-label="Edit with Lovable">
+		<span id="lovable-badge-text">Edit with</span>
+		<svg xmlns="http://www.w3.org/2000/svg" width="52" height="16" fill="none" viewBox="0 0 52 16">
+  <path fill="#FCFBF8" fill-rule="evenodd" d="M20.318 5.25c.643 0 1.206.14 1.69.418a2.81 2.81 0 0 1 1.118 1.191c.266.513.4 1.115.4 1.807s-.134 1.296-.4 1.812a2.81 2.81 0 0 1-1.118 1.193c-.484.278-1.047.418-1.69.418s-1.208-.14-1.695-.418a2.85 2.85 0 0 1-1.125-1.193c-.262-.516-.393-1.12-.393-1.812s.131-1.294.393-1.807a2.848 2.848 0 0 1 1.125-1.191c.487-.279 1.052-.418 1.695-.418Zm0 1.425c-.27 0-.504.076-.7.228-.193.147-.34.37-.443.67-.102.295-.153.66-.153 1.093 0 .435.05.801.153 1.1.102.3.25.524.443.676.196.147.43.22.7.22.27 0 .502-.073.694-.22.193-.152.341-.375.443-.67.103-.299.153-.667.153-1.106 0-.65-.112-1.145-.337-1.481a1.08 1.08 0 0 0-.953-.51ZM32.7 5.25c.61 0 1.127.1 1.549.3.422.197.74.48.953.849.217.368.325.809.325 1.32v2.704c0 .29.02.562.062.812.044.245.108.4.19.466V12h-1.935a5.895 5.895 0 0 1-.105-.684 7.745 7.745 0 0 1-.02-.228 2.293 2.293 0 0 1-.151.203c-.205.242-.47.437-.793.584-.32.143-.685.215-1.094.215-.406 0-.77-.08-1.094-.24a1.845 1.845 0 0 1-.756-.682 1.984 1.984 0 0 1-.27-1.045c0-.606.178-1.069.535-1.388.356-.324.87-.534 1.542-.633l1.125-.16c.225-.032.403-.074.534-.123a.622.622 0 0 0 .288-.196.549.549 0 0 0 .093-.327.65.65 0 0 0-.11-.367.702.702 0 0 0-.32-.27c-.14-.07-.31-.105-.51-.105-.32 0-.576.083-.768.251-.193.164-.298.39-.314.676h-1.923c.016-.434.147-.82.393-1.155.25-.34.596-.604 1.039-.792.442-.189.954-.283 1.535-.283Zm.99 3.498a.98.98 0 0 1-.215.14 2.49 2.49 0 0 1-.584.178l-.473.092c-.315.061-.553.156-.713.283-.155.127-.233.305-.233.534 0 .23.084.412.252.547.168.135.383.203.645.203s.494-.058.694-.173c.201-.118.355-.282.461-.49.11-.21.166-.448.166-.714v-.6Zm4.526-2.375c.065-.125.138-.243.221-.349.197-.25.437-.44.719-.571.282-.135.6-.203.952-.203.528 0 .988.138 1.377.412.389.275.688.67.896 1.186.21.512.314 1.12.314 1.824 0 .7-.107 1.309-.32 1.825-.213.512-.518.906-.915 1.18-.393.275-.854.412-1.383.412-.352 0-.667-.062-.946-.184a1.832 1.832 0 0 1-.7-.554 2.2 2.2 0 0 1-.234-.383V12h-1.843V3h1.862v3.373Zm1.284.296c-.274 0-.51.085-.707.253-.192.163-.338.397-.436.7a3.376 3.376 0 0 0-.148 1.05c0 .406.05.759.148 1.058.098.299.243.53.436.694.197.164.433.246.707.246.279 0 .512-.082.7-.246.193-.164.336-.395.43-.694.099-.3.148-.652.148-1.058 0-.405-.05-.757-.147-1.056-.095-.299-.238-.53-.43-.694a1.015 1.015 0 0 0-.7-.253Zm9.416-1.419c.602 0 1.136.131 1.604.393.466.262.829.643 1.086 1.143.263.5.394 1.097.394 1.794 0 .25-.002.449-.006.596H47.51c.018.288.071.538.164.75a1.3 1.3 0 0 0 .491.596c.214.13.465.196.757.196.319 0 .583-.082.792-.246.209-.167.34-.403.393-.706h1.862a2.48 2.48 0 0 1-.485 1.235 2.54 2.54 0 0 1-1.051.805c-.439.188-.949.283-1.53.283-.655 0-1.225-.125-1.708-.375a2.672 2.672 0 0 1-1.13-1.143c-.267-.508-.4-1.137-.4-1.887 0-.712.14-1.327.418-1.843a2.86 2.86 0 0 1 1.155-1.186c.491-.27 1.051-.405 1.678-.405Zm-.044 1.345c-.274 0-.516.068-.725.203a1.29 1.29 0 0 0-.479.59 2.045 2.045 0 0 0-.132.498h2.562a1.873 1.873 0 0 0-.138-.602 1.061 1.061 0 0 0-.418-.516 1.243 1.243 0 0 0-.67-.173Z" clip-rule="evenodd"/>
+  <path fill="#FCFBF8" d="m26.605 9.995 1.342-4.566h1.924L27.628 12h-2.07l-2.33-6.57h1.98l1.397 4.565Zm-13.013.143h2.256c1.632 0 1.421 1.837 1.418 1.861h-5.603V3h1.93v7.138Zm31.516 1.861h-1.862V3h1.862v8.999Z"/>
+  <path fill="url(#a)" fill-rule="evenodd" d="M2.7 3c1.492 0 2.7 1.192 2.7 2.663v1.012h.9c1.49 0 2.7 1.192 2.7 2.662S7.791 12 6.3 12H0V5.663C0 4.193 1.209 3 2.7 3Z" clip-rule="evenodd"/>
+  <defs>
+    <radialGradient id="a" cx="0" cy="0" r="1" gradientTransform="matrix(-1.54236 7.07838 -10.231 -2.15602 4.627 5.022)" gradientUnits="userSpaceOnUse">
+      <stop offset=".106" stop-color="#FE7B02"/>
+      <stop offset=".394" stop-color="#FE3F21"/>
+      <stop offset=".608" stop-color="#F858BC"/>
+      <stop offset=".929" stop-color="#575ECF"/>
+    </radialGradient>
+  </defs>
+</svg>
 
-const fmt = n => "$" + parseFloat(n || 0).toFixed(2);
 
-function App() {
-  const [file, setFile] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [converted, setConverted] = useState(null);
-  const [dragging, setDragging] = useState(false);
+	</a>
+	
+	<span id="lovable-badge-divider" aria-hidden="true"></span>
+	
+	<button 
+		id="lovable-badge-close"
+		aria-label="Dismiss"
+		title="Dismiss"
+		type="button">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+			<path d="M10.646 4.646a.5.5 0 1 1 .707.708L8.707 8l2.646 2.646a.5.5 0 1 1-.707.707L8 8.707l-2.646 2.646a.5.5 0 1 1-.708-.707L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708L8 7.293l2.646-2.647Z"/>
+		</svg>
+	</button>
+</aside>
+<script>
+	// Don't show the lovable-badge if the page is in an iframe or if it's being rendered by puppeteer (screenshot service)
+	if (window.self !== window.top || navigator.userAgent.includes('puppeteer')) {
+		var badge = document.getElementById('lovable-badge');
+		if (badge) {
+			badge.style.display = 'none';
+		}
+	}
 
-  function handleFile(f) {
-    if (!f || f.type !== "application/pdf") return;
-    setFile(f); setConverted(null); setStatus(null);
-  }
-
-  function onDrop(e) {
-    e.preventDefault(); setDragging(false);
-    handleFile(e.dataTransfer.files[0]);
-  }
-
-  function toB64(f) {
-    return new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result.split(",")[1]);
-      r.onerror = rej;
-      r.readAsDataURL(f);
-    });
-  }
-
-  async function convert() {
-    if (!file) return;
-    setStatus({ type: "loading", msg: "Extrayendo información del PDF con IA..." });
-    try {
-      const b64 = await toB64(file);
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // ⬇ Agrega tu API key aquí para pruebas locales
-          // "x-api-key": "sk-ant-..."
-          // En producción esto se maneja server-side
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          messages: [{
-            role: "user",
-            content: [
-              { type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } },
-              { type: "text", text: 'Extrae los datos de esta factura de Smartbeemo y responde SOLO con JSON sin markdown, con esta estructura exacta: {"invoiceNumber":"","date":"","dueDate":"","currency":"","paymentTerm":"","billTo":"","subtotal":0,"tax":0,"total":0,"balance":0,"items":[{"name":"","qty":0,"unitPrice":0,"period":"","discount":0,"total":0}]}. Reemplaza "smartBeemo" por "Graddual" en los nombres de items.' }
-            ]
-          }]
-        })
-      });
-      const data = await resp.json();
-      if (data.error) throw new Error(data.error.message);
-      const text = (data.content || []).map(c => c.text || "").join("");
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
-      setConverted(parsed);
-      setStatus({ type: "success", msg: "✅ Factura convertida correctamente." });
-    } catch (err) {
-      setStatus({ type: "error", msg: "❌ Error: " + err.message });
-      console.error(err);
-    }
-  }
-
-  function downloadPDF() {
-    if (!converted) return;
-    const d = converted;
-    const rows = (d.items || []).map(item => `
-      <tr>
-        <td>${item.name}</td>
-        <td style="text-align:center">${item.qty}</td>
-        <td style="text-align:right">${fmt(item.unitPrice)}</td>
-        <td style="text-align:center;font-size:11px;color:#888">${item.period}</td>
-        <td style="text-align:center">${item.discount}</td>
-        <td style="text-align:right;font-weight:700">${fmt(item.total)}</td>
-      </tr>`).join("");
-
-    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-    <title>Factura Graddual ${d.invoiceNumber}</title>
-    <style>
-      @page{size:A4;margin:28mm 20mm 20mm 20mm}
-      *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:Arial,Helvetica,sans-serif;color:#1a1a2e;font-size:12px;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      .page{max-width:760px;margin:0 auto;padding:24px}
-      .topbar{background:#1a0a2e;color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;font-size:13px}
-      .topbar button{background:#7F77DD;color:#fff;border:none;padding:8px 22px;border-radius:7px;font-weight:700;cursor:pointer;font-size:13px}
-      .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid #EEEDFE}
-      .logo-box{background:#1a0a2e;border-radius:8px;padding:10px 20px}
-      .logo-box span{color:#fff;font-weight:700;font-size:18px}
-      .inv-info{text-align:right}
-      .inv-title{font-size:26px;font-weight:300;margin-bottom:6px}
-      .inv-num{display:inline-block;background:#EEEDFE;color:#3C3489;border-radius:5px;padding:3px 12px;font-size:11px;font-weight:700}
-      .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:22px}
-      .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#aaa;margin-bottom:6px}
-      .sender-name{font-weight:700;font-size:13px;margin-bottom:3px}
-      .sender-info{font-size:12px;color:#666;line-height:1.7}
-      table.dt{width:100%;font-size:12px;border-collapse:collapse}
-      table.dt td{padding:3px 0}
-      table.dt td:last-child{text-align:right;font-weight:600}
-      table.dt td:first-child{color:#888}
-      .billtxt{font-weight:700;font-size:13px;margin-bottom:20px}
-      table.items{width:100%;border-collapse:collapse;font-size:12px}
-      table.items thead tr{background:#EEEDFE;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-      table.items th{color:#3C3489;padding:9px 10px;font-weight:700;text-align:left}
-      table.items th:not(:first-child){text-align:center}
-      table.items th:last-child{text-align:right}
-      table.items td{padding:10px;border-bottom:1px solid #f0f0f0}
-      table.items td:not(:first-child){text-align:center}
-      table.items td:last-child{text-align:right;font-weight:700}
-      .totals{max-width:220px;margin-left:auto;margin-top:18px}
-      .trow{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
-      .trow .lk{color:#888}
-      .trow.grand{font-weight:700;border-top:2px solid #ddd;padding-top:9px;margin-top:5px;font-size:15px}
-      .footer{margin-top:40px;text-align:center;font-size:11px;color:#ccc;padding-top:16px;border-top:1px solid #f0f0f0}
-      @media print{
-        .topbar{display:none!important}
-        body{margin:0}
-      }
-    </style></head><body>
-    <div class="topbar">
-      <span>Vista previa — Factura Graddual <strong>${d.invoiceNumber}</strong></span>
-      <button onclick="window.print()">⬇ Descargar PDF</button>
-    </div>
-    <div class="page">
-      <div class="head">
-        <div class="logo-box"><span>graddual</span></div>
-        <div class="inv-info">
-          <div class="inv-title">INVOICE</div>
-          <span class="inv-num">${d.invoiceNumber}</span>
-        </div>
-      </div>
-      <div class="grid">
-        <div>
-          <p class="slabel">Emisor</p>
-          <p class="sender-name">Graddual</p>
-          <p class="sender-info">soporte@graddual.com<br>graddual.com</p>
-        </div>
-        <div>
-          <p class="slabel">Detalles</p>
-          <table class="dt">
-            <tr><td>Fecha</td><td>${d.date}</td></tr>
-            <tr><td>Moneda</td><td>${d.currency}</td></tr>
-            <tr><td>Pago</td><td>${d.paymentTerm}</td></tr>
-            <tr><td>Vence</td><td>${d.dueDate}</td></tr>
-          </table>
-        </div>
-      </div>
-      <p class="slabel">Facturar a</p>
-      <p class="billtxt">${d.billTo}</p>
-      <p class="slabel">Detalle de cargos</p>
-      <table class="items">
-        <thead><tr><th>Servicio</th><th>Cant.</th><th>P. Unit.</th><th>Período</th><th>Desc.</th><th>Total</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-      <div class="totals">
-        <div class="trow"><span class="lk">Subtotal</span><span>${fmt(d.subtotal)}</span></div>
-        <div class="trow"><span class="lk">Impuesto</span><span>${fmt(d.tax)}</span></div>
-        <div class="trow grand"><span>Total</span><span>${fmt(d.total)}</span></div>
-        <div class="trow"><span class="lk">Saldo</span><span>${fmt(d.balance)}</span></div>
-      </div>
-      <div class="footer">Generado por Graddual · graddual.com</div>
-    </div>
-    </body></html>`;
-
-    const win = window.open("", "_blank", "width=860,height=700");
-    if (!win) {
-      alert("El navegador bloqueó la ventana emergente.\nPermite ventanas emergentes para este sitio e intenta de nuevo.");
-      return;
-    }
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-  }
-
-  return (
-    <div className="app">
-      <div className="header">
-        <div className="logo-box"><span>graddual</span></div>
-        <div className="header-text">
-          <h1>Convertidor de facturas</h1>
-          <p>Smartbeemo → Graddual</p>
-        </div>
-      </div>
-
-      <div className="card">
-        <p className="section-label">Subir factura</p>
-        <div
-          className={`drop-zone${dragging ? " drag" : ""}`}
-          onClick={() => document.getElementById("pdf-inp").click()}
-          onDragOver={e => { e.preventDefault(); setDragging(true); }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={onDrop}
-        >
-          <div className="drop-icon">📄</div>
-          <p className="drop-label">Haz clic o arrastra tu factura PDF aquí</p>
-          <p className="drop-sub">Facturas de Smartbeemo en formato PDF</p>
-        </div>
-        <input id="pdf-inp" type="file" accept=".pdf" style={{display:"none"}} onChange={e => handleFile(e.target.files[0])} />
-
-        {file && (
-          <div className="file-chip">
-            <span style={{fontSize:20}}>📑</span>
-            <span className="name">{file.name}</span>
-            <span className="size">{(file.size/1024).toFixed(0)} KB</span>
-          </div>
-        )}
-
-        <button
-          className="btn-primary"
-          disabled={!file || status?.type === "loading"}
-          onClick={convert}
-        >
-          {status?.type === "loading" ? "Convirtiendo..." : "Convertir a formato Graddual"}
-        </button>
-
-        {status && (
-          <div className={`status ${status.type}`}>
-            {status.type === "loading" && <div className="spin" />}
-            <span>{status.msg}</span>
-          </div>
-        )}
-      </div>
-
-      {converted && (
-        <div className="card">
-          <p className="section-label">Vista previa — Factura Graddual</p>
-          <div className="preview-wrap">
-            <div className="inv-head">
-              <div className="inv-logo"><span>graddual</span></div>
-              <div>
-                <p className="inv-title">INVOICE</p>
-                <span className="inv-num">{converted.invoiceNumber}</span>
-              </div>
-            </div>
-            <div className="inv-grid">
-              <div>
-                <p className="lbl">Emisor</p>
-                <p className="sender-name">Graddual</p>
-                <p className="sender-info">soporte@graddual.com</p>
-                <p className="sender-info">graddual.com</p>
-              </div>
-              <div>
-                <p className="lbl">Detalles</p>
-                <table className="dtable">
-                  <tbody>
-                    {[["Fecha",converted.date],["Moneda",converted.currency],["Pago",converted.paymentTerm],["Vence",converted.dueDate]].map(([k,v]) => (
-                      <tr key={k}><td>{k}</td><td>{v}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <p className="lbl">Facturar a</p>
-            <p className="billtxt">{converted.billTo}</p>
-            <p className="lbl">Detalle de cargos</p>
-            <table className="items">
-              <thead>
-                <tr>
-                  {["Servicio","Cant.","P. Unit.","Período","Desc.","Total"].map((h,i) => (
-                    <th key={h} style={{textAlign:i===0?"left":i===5?"right":"center"}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {(converted.items||[]).map((item,i) => (
-                  <tr key={i}>
-                    <td>{item.name}</td>
-                    <td>{item.qty}</td>
-                    <td style={{textAlign:"right"}}>{fmt(item.unitPrice)}</td>
-                    <td style={{color:"#aaa",fontSize:10}}>{item.period}</td>
-                    <td>{item.discount}</td>
-                    <td style={{textAlign:"right"}}>{fmt(item.total)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="totals-box">
-              <div className="trow"><span className="lk">Subtotal</span><span>{fmt(converted.subtotal)}</span></div>
-              <div className="trow"><span className="lk">Impuesto</span><span>{fmt(converted.tax)}</span></div>
-              <div className="trow grand"><span>Total</span><span>{fmt(converted.total)}</span></div>
-              <div className="trow"><span className="lk">Saldo</span><span>{fmt(converted.balance)}</span></div>
-            </div>
-          </div>
-          <button className="btn-download" onClick={downloadPDF}>
-            ⬇ Ver y descargar PDF
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-ReactDOM.render(<App />, document.getElementById("root"));
+	// Add click event listener to close button with animation
+	var closeButton = document.getElementById('lovable-badge-close');
+	if (closeButton) {
+		closeButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			var badge = document.getElementById('lovable-badge');
+			if (badge) {
+				badge.classList.add('closing');
+				setTimeout(function() {
+					if (badge) {
+						badge.style.display = 'none';
+					}
+				}, 240);
+			}
+		});
+	}
 </script>
-</body>
-</html>
+</body></html>
